@@ -48,7 +48,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
     *funct = (1<<6 ^ instruction);      // Get the first 6 bits of instruction.
     *offset = (1<<16 ^ instruction);    // Get the first 16 bits of instruction.
     *jsec = (1<<26 ^ instruction);      // Get the first 26 bits of instruction.
-    
+
 }
 
 
@@ -71,9 +71,15 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 
 /* Sign Extend */
 /* 10 Points */
-void sign_extend(unsigned offset,unsigned *extended_value)
-{
-
+void sign_extend(unsigned offset,unsigned *extended_value){ //Haven't really tested yet (unsure if works)
+    if (offset & 0x8000) //if bit is negative
+    {
+        *extended_value = offset | 0xFFFF0000;
+    }
+    else //if bit is positive
+    {
+        *extended_value = offset & 0x0000FFFF;
+    }
 }
 
 /* ALU operations */
@@ -100,8 +106,20 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 
 /* PC update */
 /* 10 Points */
-void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
+void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, char Zero, unsigned *PC)//extremely unsure if this works
 {
-
+    //default update
+    *PC = *PC + 4;
+    //in event of branching
+    if (Branch == 1 && Zero == 1)
+    {
+        *PC = *PC + (extended_value << 2);
+    }
+    //in event of a jump
+    if (Jump == 1)
+    {
+        *PC = (*PC & 0xF0000000) | (jsec << 2);
+    }
 }
+
 

@@ -3,9 +3,64 @@
 
 /* ALU */
 /* 10 Points */
-void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
-{
+void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero){
+    // Switch to control which ALU control gets executed
+	switch ((int) ALUControl)
+	{
+        case 0://add
+            *ALUresult = A + B;
+            break;
 
+        case 1: //subtract
+            *ALUresult = A - B;
+            break;
+
+        case 2:
+            if ((signed)A < (signed)B)
+            {
+                *ALUresult = 1;
+            }
+            else
+            {
+                *ALUresult = 0;
+            }
+            break;
+
+        case 3:
+            if (A < B)
+            {
+                *ALUresult = 1;
+            }
+            else
+            {
+                *ALUresult = 0;
+            }
+            break;
+
+        case 4: //and
+            *ALUresult = A & B;
+            break;
+
+        case 5: //or
+
+            *ALUresult = A | B;
+            break;
+
+
+        case 6: //left shift
+            *ALUresult = B << 16;
+            break;
+
+        case 7: //not
+            *ALUresult = ~A;
+            break;
+	}
+	if(*ALUresult == 0){
+		*Zero = 1;//true 0
+	}
+	else{
+		*Zero = 0;//Not 0
+	}
 }
 
 /* instruction fetch */
@@ -193,8 +248,6 @@ void PC_update(unsigned jsec, unsigned extended_value, char Branch, char Jump, c
     //in event of a jump
     if (Jump == 1)
     {
-        *PC = (*PC & 0xF0000000) | (jsec << 2);
+        *PC = (jsec << 2) | (*PC & 0xf0000000);
     }
 }
-
-

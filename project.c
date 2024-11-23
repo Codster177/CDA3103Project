@@ -93,7 +93,19 @@ int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigne
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-
+    if (ALUresult % 4 != 0)
+    {
+        return 1;
+    }
+    if (MemRead == 1)
+    {
+        *memdata = Mem[ALUresult >> 2];
+    }
+    if (MemWrite == 1)
+    {
+        Mem[ALUresult >> 2] == data2;
+    }
+    return 0;
 }
 
 
@@ -101,7 +113,26 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 /* 10 Points */
 void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,char RegWrite,char RegDst,char MemtoReg,unsigned *Reg)
 {
-
+    unsigned dest;
+    if (RegDst == 0)
+    {
+        dest = r2;
+    }
+    else if (RegDst == 1)
+    {
+        dest = r3;
+    }
+    if (RegWrite == 1)
+    {
+        if (MemtoReg == 1)
+        {
+            Reg[dest] = memdata;
+        }
+        else if (MemtoReg == 0)
+        {
+            Reg[dest] = ALUresult;
+        }
+    }
 }
 
 /* PC update */
